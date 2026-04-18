@@ -1,4 +1,3 @@
-import Participant.py #might break depending on what file path you have, if broken just uh...just uh look at it, dosent work on colab
 class EncodedCases:
   #Use raw molecular call, ignore WHO text label if conflicting
   #Exclude sample if missing (required for subtype classification)
