@@ -146,7 +146,7 @@ class input:
     
     def infile(self):
       file = open("data.txt")
-      self.head = file.readline().split()
+      self.head = file.readline().upper().split()
       
       for line in file:
           p = Participant()
@@ -161,4 +161,4 @@ class input:
 
 i = input()
 
-print(i.infile()[1].values["PatientID"])
+print(i.infile()[1].values["PATIENTID"])
