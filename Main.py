@@ -1,4 +1,5 @@
 import numpy as np
+import ot
 #idh 1 = mutant
 class Participant: #PatientID SampleID DiagnosisAge ATRXstatus BCRStatus BRAF-KIAA1549fusion BRAFV600Estatus CancerType CancerTypeDetailed Chr19/20co-gain Chr7gain/Chr10loss ESTIMATEcombinedscore ESTIMATEimmunescore ESTIMATEstromalscore NeoplasmHistologicGrade IDH/codelsubtype IDH-specificDNAMethylationCluster IDH-specificRNAExpressionCluster IDH KarnofskyPerformanceScore MGMT MutationCount MONTHS Status Pan-GliomaDNAMethylationCluster Pan-GliomaRNAExpressionCluster Percentaneuploidy AbsolutePurity RandomForestSturmCluster Sex SupervisedDNAMethylationCluster Telomerelengthestimateinbloodnormal(Kb) Telomerelengthestimateintumor(Kb) TelomereMaintenance TERTexpression(log2) TERTexpressionstatus TERTpromoterstatus TMB(nonsynonymous) TranscriptomeSubtype EGFR 
                    #required to be uppercase
@@ -145,11 +146,18 @@ class OTOutputs: #change topics in data, its hard coded...
     vals = dict()
     
     for t in self.data.topics:
-      vals[t] = i.values[t]
+      if(not i.values[t] == "NA" and j.values[t] == "NA"):
+        if(i.values[t] == "NA" or j.values[t] == "NA"):
+          if(i.values[t] == "NA"):
+            vals[t] = j.values[t]
+          else:
+            vals[t] = i.values[t]
+        else:
+          vals[t] = abs(i.values[t] - j.values[t])
 
     cost = 0
     for c in vals:
-      cost += c * c
+      cost += float(vals[c]) * float(vals[c])
       
     return cost
   
@@ -163,10 +171,40 @@ class OTOutputs: #change topics in data, its hard coded...
       return 0
     return 1
     
-  def GRADEPenelty(self, i, j):
+  def gradePenelty(self, i, j):
     str = "NeoplasmHistologicGrade".upper()
     return abs(int((i.values[str])[1:2]) - int((j.values[str])[1:2]))
+  
+  def agePenelty(self, i, j):
+    return abs(i.values["DIAGNOSISAGE"] - j.values["DIAGNOSISAGE"])
 
+  def purityPenelty(self, i, j):
+    str = "AbsolutePurity".upper()
+    try:
+      n = float(i.values[str]) - float(j.values[str])
+      return abs(n)
+    except ValueError:
+      return -1
+  
+  def cost(self, i, j):
+    omics = self.omicsDistance(i, j)
+    idh = self.IDHPenelty(i, j) * 0.5
+    mgmt = self.MGMTPenelty(i, j) * 0.5
+    grade = self.gradePenelty(i, j) * 0.25
+    purity = self.purityPenelty(i, j) * 0.4
+    
+    return omics + idh + mgmt + grade + purity
+  
+  def costMatrix(self):
+    length = len(self.data.vals)
+    arr = np.zeros((length, length))
+    for r in range(0, length):
+      for c in range(0, length):
+        v = self.data.vals
+        arr[r,c] = self.cost(v[r], v[c])
+    return arr
+    
+    
 class input:
     def __init__(self):
       self.vals = []
@@ -209,4 +247,5 @@ class data: #change topics for omics
 
 d = data("data.txt")
 o = OTOutputs(d)
-print(o.GRADEPenelty(d.vals[0], d.vals[1]))
+print(o.costMatrix())
+print("execution complete")
