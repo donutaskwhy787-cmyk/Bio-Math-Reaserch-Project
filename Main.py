@@ -147,11 +147,11 @@ class OTOutputs: #change topics in data, its hard coded...
       if(not i.values[t] == "NA" and j.values[t] == "NA"):
         if(i.values[t] == "NA" or j.values[t] == "NA"):
           if(i.values[t] == "NA"):
-            vals[t] = j.values[t]
+            vals[t] = float(j.values[t])
           else:
-            vals[t] = i.values[t]
+            vals[t] = float(i.values[t])
         else:
-          vals[t] = abs(i.values[t] - j.values[t])
+          vals[t] = abs(float(i.values[t]) - float(j.values[t]))
 
     cost = 0
     for c in vals:
@@ -193,21 +193,33 @@ class OTOutputs: #change topics in data, its hard coded...
     
     return omics + idh + mgmt + grade + purity
   
-  def costMatrix(self):
-    length = len(self.data.vals)
-    arr = np.zeros((length, length))
-    for r in range(0, length):
-      for c in range(0, length):
-        v = self.data.vals
-        arr[r,c] = self.cost(v[r], v[c])
+  def costMatrix(self, catagory, type1, type2):
+    arrT1 = []
+    arrT2 = []
+    
+    for p in self.data.vals:
+      if(p.values[catagory] == type1):
+        arrT1.append(p)
+      elif(p.values[catagory] == type2):
+        arrT2.append(p)   
+    
+    length1 = len(arrT1)
+    length2 = len(arrT2)
+    arr = np.zeros((length1, length2))
+    for r in range(0, length1):
+      for c in range(0, length2):
+        arr[r,c] = self.cost(arrT1[r], arrT2[c])
     return arr
   
-  def result(self):
-    c = self.costMatrix()
-    return ot.solve_sample(c, c)
+  def result(self, catagory, type1, type2):
+    a = self.costMatrix(catagory, type1, type2)
+    
+    weight1 = np.ones((len(a),)) / len(a)
+    weight2 = np.ones((len(a[1]),)) / len(a[1])
+    
+    return ot.emd2(weight1, weight2, a)
   
-  def resultMatrx(self):
-    return self.result().plan
+  
     
 class input:
     def __init__(self):
@@ -245,14 +257,7 @@ class data: #change topics for omics
           
 
 
-def rainIkUrDementiaSoThisWillPrintTheOTMatrixRawToAFileTheThingIfYouTypeThisOutLMAO(d): #d = data prints to rainurdementia.txt
-  with open("rainurdementia.txt", "w") as f:
-    re = OTOutputs(d).result().plan
-    for r in range(0, len(d.vals)):
-      str2 = ""
-      for c in range(0, len(d.vals)):
-        str2 += str(re[r][c]) + " "
-      f.write(str2 + "\n")
+
        
   
 
@@ -260,6 +265,8 @@ def rainIkUrDementiaSoThisWillPrintTheOTMatrixRawToAFileTheThingIfYouTypeThisOut
 
 d = data("data.txt")
 o = OTOutputs(d)
-re = o.result().plan
 
-rainIkUrDementiaSoThisWillPrintTheOTMatrixRawToAFileTheThingIfYouTypeThisOutLMAO(d)
+
+idhResultsVars = ["Mutant", "WT"]
+
+print(o.result("IDH", idhResultsVars[0], idhResultsVars[1]))
