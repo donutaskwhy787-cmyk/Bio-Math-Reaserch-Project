@@ -245,8 +245,8 @@ class data: #change topics for omics
           
           
           
-def rainIkUrDementiaSoThisWillPrintTheOTMatrixRawToAFileTheThingIfYouTypeThisOutLMAO(d): #d = data prints to demofiles.txt
-  with open("demofile.txt", "w") as f:
+def rainIkUrDementiaSoThisWillPrintTheOTMatrixRawToAFileTheThingIfYouTypeThisOutLMAO(d): #d = data prints to rainurdementia.txt
+  with open("rainurdementia.txt", "w") as f:
     re = OTOutputs(d).result().plan
     for r in range(0, len(d.vals)):
       str2 = ""
@@ -262,4 +262,4 @@ d = data("data.txt")
 o = OTOutputs(d)
 re = o.result().plan
 
-
+rainIkUrDementiaSoThisWillPrintTheOTMatrixRawToAFileTheThingIfYouTypeThisOutLMAO(d)
