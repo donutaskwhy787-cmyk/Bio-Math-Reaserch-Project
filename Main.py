@@ -135,9 +135,37 @@ class EncodedCases:
   def WHOGrade(self, par):
     print("")
 
-class OTOutputs:
-   def cost(self, i, j):
-      print("AHHH")
+class OTOutputs: #change topics in data, its hard coded...
+  def __init__(self, dat):
+    self.data = dat
+    self.avgs = dat.avgs
+    
+  def omicsDistance(self, i, j):
+    pars = [i, j]
+    vals = dict()
+    
+    for t in self.data.topics:
+      vals[t] = i.values[t]
+
+    cost = 0
+    for c in vals:
+      cost += c * c
+      
+    return cost
+  
+  def IDHPenelty(self, i, j):
+    if(i.values["IDH"] == j.values["IDH"]):
+      return 0
+    return 1
+  
+  def MGMTPenelty(self, i, j):
+    if(i.values["MGMT"] == j.values["MGMT"]):
+      return 0
+    return 1
+    
+  def GRADEPenelty(self, i, j):
+    str = "NeoplasmHistologicGrade".upper()
+    return abs(int((i.values[str])[1:2]) - int((j.values[str])[1:2]))
 
 class input:
     def __init__(self):
@@ -155,14 +183,14 @@ class input:
           self.vals.append(p)
       return self.vals
          
-class data:
+class data: #change topics for omics
   def __init__(self, filename):
     self.avgs = dict()
     self.reader = input()
     self.vals = self.reader.infile("data.txt")
+    self.topics = ["DIAGNOSISAGE", "ABSOLUTEPURITY", "MONTHS"]
     
-    topics = ["DIAGNOSISAGE", "ABSOLUTEPURITY", "MONTHS"]
-    for t in topics:
+    for t in self.topics:
       count = 0;
       sum = 0;
       for i in self.vals:
@@ -180,4 +208,5 @@ class data:
 
 
 d = data("data.txt")
-print(d.avgs[""])
+o = OTOutputs(d)
+print(o.GRADEPenelty(d.vals[0], d.vals[1]))
