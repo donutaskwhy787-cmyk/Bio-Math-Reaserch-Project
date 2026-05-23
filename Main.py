@@ -1,6 +1,7 @@
 import numpy as np
 #idh 1 = mutant
-class Participant:
+class Participant: #PatientID SampleID DiagnosisAge ATRXstatus BCRStatus BRAF-KIAA1549fusion BRAFV600Estatus CancerType CancerTypeDetailed Chr19/20co-gain Chr7gain/Chr10loss ESTIMATEcombinedscore ESTIMATEimmunescore ESTIMATEstromalscore NeoplasmHistologicGrade IDH/codelsubtype IDH-specificDNAMethylationCluster IDH-specificRNAExpressionCluster IDH KarnofskyPerformanceScore MGMT MutationCount MONTHS Status Pan-GliomaDNAMethylationCluster Pan-GliomaRNAExpressionCluster Percentaneuploidy AbsolutePurity RandomForestSturmCluster Sex SupervisedDNAMethylationCluster Telomerelengthestimateinbloodnormal(Kb) Telomerelengthestimateintumor(Kb) TelomereMaintenance TERTexpression(log2) TERTexpressionstatus TERTpromoterstatus TMB(nonsynonymous) TranscriptomeSubtype EGFR 
+                   #required to be uppercase
   def __init__(self):
     self.values = dict()
   def initalize(self, headers, values):
@@ -138,14 +139,12 @@ class OTOutputs:
    def cost(self, i, j):
       print("AHHH")
 
-    
-
 class input:
     def __init__(self):
       self.vals = []
     
-    def infile(self):
-      file = open("data.txt")
+    def infile(self, name):
+      file = open(name)
       self.head = file.readline().upper().split()
       
       for line in file:
@@ -156,10 +155,29 @@ class input:
           self.vals.append(p)
       return self.vals
          
+class data:
+  def __init__(self, filename):
+    self.avgs = dict()
+    self.reader = input()
+    self.vals = self.reader.infile("data.txt")
+    
+    topics = ["DIAGNOSISAGE", "ABSOLUTEPURITY", "MONTHS"]
+    for t in topics:
+      count = 0;
+      sum = 0;
+      for i in self.vals:
+        try:
+          sum += float(i.values[t])
+          count += 1
+        except ValueError:
+          count = count #just a place holder, does nothing
+      self.avgs[t] = sum/count
+          
+        
+        
+  
 
-print("test")
 
 
-i = input()
-
-print(i.infile()[1].values["PATIENTID"])
+d = data("data.txt")
+print(d.avgs[""])
