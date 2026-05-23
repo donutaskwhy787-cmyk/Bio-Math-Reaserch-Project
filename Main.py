@@ -207,6 +207,9 @@ class OTOutputs: #change topics in data, its hard coded...
   def result(self):
     c = self.costMatrix()
     return ot.solve_sample(c, c)
+  
+  def resultMatrx(self):
+    return self.result().plan
     
     
     
@@ -246,7 +249,16 @@ class data: #change topics for omics
       self.avgs[t] = sum/count
           
         
-        
+def rainIkUrDementiaSoThisWillPrintToAFileTheThingIfYouTypeThisOutLMAO(d): #d = data prints to demofiles.txt
+  with open("demofile.txt", "w") as f:
+    
+    re = OTOutputs(d).costMatrix().plan
+    for r in range(0, len(d.vals)):
+      str2 = ""
+      for c in range(0, len(d.vals)):
+        str2 += str(re[r][c]) + " "
+      f.write(str2 + "\n")
+       
   
 
 
@@ -255,10 +267,4 @@ d = data("data.txt")
 o = OTOutputs(d)
 re = o.result().plan
 
-with open("demofile.txt", "w") as f:
-  for r in range(0, len(d.vals)):
-    str2 = ""
-    for c in range(0, len(d.vals)):
-      str2 += str(re[r][c]) + " "
-    f.write(str2 + "\n")
 
