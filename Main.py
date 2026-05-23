@@ -29,7 +29,6 @@ class Participant: #PatientID SampleID DiagnosisAge ATRXstatus BCRStatus BRAF-KI
         self.values["GRADE"] = e
         self.values["MONTHS"] = d
 
-
 class Consistancy:
     def rDR(self, idh):
         return 1 - idh
@@ -73,7 +72,6 @@ class Consistancy:
          if(i == '1'):
             sum += 1
       return sum/3
-
 
 class EncodedCases:
   #Use raw molecular call, ignore WHO text label if conflicting
@@ -210,9 +208,6 @@ class OTOutputs: #change topics in data, its hard coded...
   
   def resultMatrx(self):
     return self.result().plan
-    
-    
-    
     
 class input:
     def __init__(self):
