@@ -1,5 +1,5 @@
 import numpy as np
-import ot
+import ot #pip install POT
 #idh 1 = mutant
 class Participant: #PatientID SampleID DiagnosisAge ATRXstatus BCRStatus BRAF-KIAA1549fusion BRAFV600Estatus CancerType CancerTypeDetailed Chr19/20co-gain Chr7gain/Chr10loss ESTIMATEcombinedscore ESTIMATEimmunescore ESTIMATEstromalscore NeoplasmHistologicGrade IDH/codelsubtype IDH-specificDNAMethylationCluster IDH-specificRNAExpressionCluster IDH KarnofskyPerformanceScore MGMT MutationCount MONTHS Status Pan-GliomaDNAMethylationCluster Pan-GliomaRNAExpressionCluster Percentaneuploidy AbsolutePurity RandomForestSturmCluster Sex SupervisedDNAMethylationCluster Telomerelengthestimateinbloodnormal(Kb) Telomerelengthestimateintumor(Kb) TelomereMaintenance TERTexpression(log2) TERTexpressionstatus TERTpromoterstatus TMB(nonsynonymous) TranscriptomeSubtype EGFR 
                    #required to be uppercase
@@ -203,6 +203,12 @@ class OTOutputs: #change topics in data, its hard coded...
         v = self.data.vals
         arr[r,c] = self.cost(v[r], v[c])
     return arr
+  
+  def result(self):
+    c = self.costMatrix()
+    return ot.solve_sample(c, c)
+    
+    
     
     
 class input:
@@ -226,7 +232,7 @@ class data: #change topics for omics
     self.avgs = dict()
     self.reader = input()
     self.vals = self.reader.infile("data.txt")
-    self.topics = ["DIAGNOSISAGE", "ABSOLUTEPURITY", "MONTHS"]
+    self.topics = ["DIAGNOSISAGE", "ABSOLUTEPURITY", "MONTHS"] 
     
     for t in self.topics:
       count = 0;
@@ -247,5 +253,12 @@ class data: #change topics for omics
 
 d = data("data.txt")
 o = OTOutputs(d)
-print(o.costMatrix())
-print("execution complete")
+re = o.result().plan
+
+with open("demofile.txt", "w") as f:
+  for r in range(0, len(d.vals)):
+    str2 = ""
+    for c in range(0, len(d.vals)):
+      str2 += str(re[r][c]) + " "
+    f.write(str2 + "\n")
+
