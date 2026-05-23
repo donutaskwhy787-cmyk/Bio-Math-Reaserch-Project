@@ -53,7 +53,7 @@ class Consistancy:
         return abs(self.rRC(egfr) - self.severity(grade, months))
     
     def consistancyVector(self, p):
-        vals = p.vals
+        vals = p.values
         idh = vals["IDH"] 
         egfr = vals["EGFR"]
         mgmt = vals["MGMT"]
@@ -229,8 +229,8 @@ class data: #change topics for omics
   def __init__(self, filename):
     self.avgs = dict()
     self.reader = input()
-    self.vals = self.reader.infile("data.txt")
-    self.topics = ["DIAGNOSISAGE", "ABSOLUTEPURITY", "MONTHS"] 
+    self.vals = self.reader.infile("data.txt") #array with participants
+    self.topics = ["DIAGNOSISAGE", "ABSOLUTEPURITY", "MONTHS"] #hard coded topic that are quantitative that leo put down
     
     for t in self.topics:
       count = 0;
@@ -243,8 +243,8 @@ class data: #change topics for omics
           count = count #just a place holder, does nothing
       self.avgs[t] = sum/count
           
-          
-          
+
+
 def rainIkUrDementiaSoThisWillPrintTheOTMatrixRawToAFileTheThingIfYouTypeThisOutLMAO(d): #d = data prints to rainurdementia.txt
   with open("rainurdementia.txt", "w") as f:
     re = OTOutputs(d).result().plan
