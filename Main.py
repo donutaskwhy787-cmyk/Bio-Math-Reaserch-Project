@@ -243,11 +243,11 @@ class data: #change topics for omics
           count = count #just a place holder, does nothing
       self.avgs[t] = sum/count
           
-        
-def rainIkUrDementiaSoThisWillPrintToAFileTheThingIfYouTypeThisOutLMAO(d): #d = data prints to demofiles.txt
+          
+          
+def rainIkUrDementiaSoThisWillPrintTheOTMatrixRawToAFileTheThingIfYouTypeThisOutLMAO(d): #d = data prints to demofiles.txt
   with open("demofile.txt", "w") as f:
-    
-    re = OTOutputs(d).costMatrix().plan
+    re = OTOutputs(d).result().plan
     for r in range(0, len(d.vals)):
       str2 = ""
       for c in range(0, len(d.vals)):
